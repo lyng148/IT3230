@@ -1,0 +1,94 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+#define M 10000
+#define ULL unsigned long long 
+
+typedef struct Node{
+    ULL k;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+Node* T[M];
+
+Node* makeNode(ULL k) {
+    Node* r = (Node*)malloc(sizeof(Node));
+    r->k = k; 
+    r->left = NULL; 
+    r->right =NULL;
+    return r;
+}
+
+int h(ULL k) {
+    int hashCode=0;
+    hashCode = k % M;
+    return hashCode;
+}
+
+Node* findBST(Node* r, ULL k) {
+    if(r==NULL) 
+        return NULL;
+    if(r->k == k) 
+        return r;
+    if(r->k > k) 
+        return findBST(r->left, k);
+    if(r->k < k) 
+        return findBST(r->right, k);
+}
+
+Node* insertBST(Node* r, ULL k) {
+    if(r==NULL) 
+        return makeNode(k);
+    if(r->k < k)
+        r->right =insertBST(r->right, k);
+    if(r->k > k)
+        r->left =insertBST(r->left, k);
+    return r;
+}
+
+int insert(ULL k) {
+    int index = h(k);
+    Node* p = findBST(T[index], k);
+    if(p!=NULL) 
+        return 0;
+    else {
+        T[index] = insertBST(T[index], k);
+        return 1;
+    }
+}
+
+int find(ULL k) {
+    int index = h(k);
+    Node* p = findBST(T[index], k);
+    if(p!=NULL) 
+        return 1;
+    else 
+        return 0;
+}
+
+int main() {
+    char k[60];
+    while(1) {
+        scanf("%s", k);
+        if(strcmp(k, "*")==0)
+            break;
+        else 
+            insert(atoll(k));
+    }
+    while(1) {
+        scanf("%s", k);
+        if(strcmp(k, "find")==0) {
+            scanf("%s", k);
+            printf("%d\n", find(atoll(k)));
+        }
+        if(strcmp(k, "insert")==0) {
+            scanf("%s", k);
+            printf("%d\n", insert(atoll(k)));
+        }
+        if(strcmp(k, "***") == 0)
+            break;
+    }
+    return 0;
+}
